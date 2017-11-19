@@ -113,9 +113,9 @@ class API(object):
 		data={}
 		self.crypter.setSeed()
 		if force:
-			s1=self.crypter.encrypt(input)
-			s2=self.crypter.rsaEncryptText()
-			return '%s_%s'%(s2,s1)
+			s2=self.crypter.encrypt(input)
+			s1=self.crypter.rsaEncryptText()
+			return '%s_%s'%(s1,s2)
 		else:
 			ChkResult=self.genChkResult()
 			data['buddy']={}#TODO
@@ -134,6 +134,7 @@ class API(object):
 
 	def tutorial_battle_win(self,session_key):
 		data={'results':self.genBattle_win('{"buddy":{"1":{"hp":6,"sa":[],"panel1":null,"panel2":1,"panel3":1,"ss_gauge":100}},"supporter":{"supporter_ss_gauge":0},"beast":{"synchronization_count":0,"remain_active_skill_num":0},"score":{"general":[{"no":1,"val1":5,"val2":0,"val3":0,"val4":0,"val5":0},{"no":2,"val1":139,"val2":6,"val3":0,"val4":0,"val5":0},{"no":3,"val1":0,"val2":0,"val3":0,"val4":0,"val5":0}],"specific":[{"no":1,"val1":1,"val2":0,"val3":0,"val4":0,"val5":0}]},"log":{"action_time":0,"action_num":0,"buddy_damage":0,"enemy_damage":0,"fps":0,"supporter_ss_use_num":0,"all_enemy_info":[],"enemy_info":[],"continue_infos":[],"buddy_ab_use_num":{},"buddy_ss_use_num":{},"enemy_ab_use_num":{},"max_combo_num":0},"initChkResult":1,"session_key":"%s"}'%(session_key),True)}
+		self.s.headers.update({'Accept':'application/json, text/javascript, */*; q=0.01','X-Requested-With':'XMLHttpRequest','User-Session':'UNDEFINED_IN_API_JS','Accept-Encoding':'gzip, deflate','Accept-Language':'en-gb','Content-Type':'application/json','User-Agent':'Mozilla/5.0 (iPad; CPU OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92'})
 		return self.callAPI('/dff/tutorial/battle_win',2,self.jD(data))
 
 	def tutorial_battle_init_data(self):
@@ -176,7 +177,10 @@ class API(object):
 		
 	def battle(self,battle_id):
 		return self.callAPI('/dff/battle/?timestamp=%s&battle_id=%s'%(self.TS10(),battle_id),1)
-		
+
+	def battle_ts(self):
+		return self.callAPI('/dff/battle/?timestamp=%s'%(self.TS10()),1)
+
 	def battles(self):
 		return self.callAPI('/dff/world/battles',1)
 		
@@ -215,7 +219,9 @@ class API(object):
 		self.tutorial_proceed(58)
 		self.tutorial_battles()
 		session_key=self.tutorial_begin_battle_session(70)
+		self.battle_ts()
 		self.tutorial_battle_init_data()
+		self.appspot.session_update()
 		self.tutorial_battle_win(session_key)
 		exit(1)
 		self.tutorial()

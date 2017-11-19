@@ -19,8 +19,7 @@ tmp='YbjZyIgMGh7uqfnXDJn0uR8wfGe5TOHoRyKWcjIpAgh2k6izeVrI+Ci94x7ChZDx5SzBKHev9y1
 #crp= c.encrypt(plain)
 #print '"%s"'%crp
 print '"%s"'%c.decrypt(tmp)
-while(1):
-	res= c.rsaEncryptText()
-	if 'Pf3y009NkU8NV5gskWAEVkzpR' in res:
-		print res
-		exit(1)
+res= c.rsaEncryptText()
+if 'Pf3y009NkU8NV5gskWAEVkzpR' in res:
+	print res
+	exit(1)

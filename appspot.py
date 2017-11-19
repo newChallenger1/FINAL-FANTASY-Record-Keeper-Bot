@@ -64,6 +64,10 @@ class Appspot(object):
 		self.userId=re.search('","([0-9]{15,15})","',res).group(1)
 		return res
 
+	def session_update(self):
+		self.s.headers.update({'Authorization':'Bearer %s'%(self.getAccessToken()),'X-LCD-DeviceToken':self.push_token,'X-LCD-BundleId':'com.dena.west.FFRK'})
+		return self.callAPI('https://lcd-prod.appspot.com/session?duration=176203&action=UPDATE',1)
+		
 	def getAccessToken(self):
 		return self.token
 

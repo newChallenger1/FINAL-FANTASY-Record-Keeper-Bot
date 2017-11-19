@@ -1,5 +1,4 @@
 from Crypto.Cipher import AES
-from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 import rsa
@@ -28,12 +27,13 @@ class Crypter(object):
 		self.key=key
 
 	def rsaEncryptText(self):
-		#pubkey = RSA.importKey(self.publicKey)
-		#pubkey = PKCS1_OAEP.new(pubkey)
-		#pubkey = PKCS1_v1_5.new(pubkey)
+		pubkey = RSA.importKey(self.publicKey)
+		pubkey = PKCS1_v1_5.new(pubkey)
 		#print 'rsaEncryptText:%s'%self.key.encode('hex')
-		#return base64.b64encode(pubkey.encrypt(self.key)).replace('\n','')
-		return base64.b64encode(rsa.encrypt(self.key, rsa.PublicKey.load_pkcs1_openssl_pem(self.publicKey)))
+		return base64.b64encode(pubkey.encrypt(self.key)).replace('\n','')
+		#print rsa.common.byte_size(rsa.PublicKey.load_pkcs1_openssl_pem(self.publicKey).n)
+		#res=rsa.encrypt(self.key.encode('hex'), rsa.PublicKey.load_pkcs1_openssl_pem(self.publicKey))
+		return base64.b64encode(res)
 
 	def genSeed(self):
 		return os.urandom(16)

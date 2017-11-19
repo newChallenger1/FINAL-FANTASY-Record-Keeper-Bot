@@ -150,8 +150,7 @@ class API(object):
 		self.user_data=json.loads(re.search('<script data-app-init-data type="application/json">(.*)</script>',res).group(1))
 		return res
 
-	def tutorial_update_rcommend_party(self):
-		data={"step":100,"slot_to_buddy_id":{"1":49760529,"2":49760530,"3":49760531,"4":0,"5":0},"changed_row_info":{"49760530":2,"49760531":2}}
+	def tutorial_update_rcommend_party(self,data):
 		return self.callAPI('/dff/tutorial/update_recommend_party',2,self.jD(data))
 
 	def tutorial_execute_gacha(self,step):
@@ -224,13 +223,17 @@ class API(object):
 		self.tutorial_battle_win(session_key)
 		self.tutorial()
 		self.tutorial_proceed(90)
-		self.tutorial_update_rcommend_party()
+		buddys=[]
+		for i in self.user_data['buddy']:
+			buddys.append(i['id'])
+		buddys.sort()
+		self.tutorial_update_rcommend_party({"step":100,"slot_to_buddy_id":{"1":buddys[0],"2":buddys[1],"3":buddys[2],"4":0,"5":0},"changed_row_info":{str(buddys[1]):2,str(buddys[2]):2}})
 		self.tutorial_gacha_list()
-		self.tutorial_execute_gacha(110)
+		res=self.tutorial_execute_gacha(110)
 		self.tutorial_proceed(120)
 		self.tutorial_proceed(130)
 		self.tutorial_proceed(150)
-		self.tutorial_update_hero_equipment(160,774547918)
+		self.tutorial_update_hero_equipment(160,json.loads(res)['items'][0]['id'])
 		self.tutorial_give_and_set_ability()
 		self.tutorial_proceed(183)
 		self.tutorial_proceed(185)

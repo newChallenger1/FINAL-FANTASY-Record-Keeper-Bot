@@ -21,10 +21,13 @@ class Appspot(object):
 		self.id=None
 		self.token=None
 		self.userId=None
+		self.u1=None
 
-	def setId(self,device_id,push_token=None):
+	def setId(self,device_id,push_token=None,u1=None):
 		self.device_id=device_id
 		self.push_token=push_token if push_token else '0000000000000000000000000000000000000000000000000000000000000000'
+		if u1:
+			self.u1=u1
 
 	def callAPI(self,path,kind,data=None):
 		if kind == 1:
@@ -51,8 +54,11 @@ class Appspot(object):
 		data='7|0|18|https://lcd-prod.appspot.com/lcdweb/|%s|%s|getStoreType|com.dena.west.lcd.web.shared.model.Capabilities/399814386|00000000-0000-0000-0000-000000000000|%s|%s|Mila432|iPhone10,6|%s|en_DE|Apple|wifi|11.1|%s|APPLE|Europe/Berlin|1|2|3|4|1|5|5|0|6|7|8|9|0|568|10|11|320|0|0|0|0|12|13|14|15|0|0|16|0|0|17|18|3600000|'%(self.E,self.rcp,self.app_version,self.bundleId,self.push_token,self.sdkVersion)
 		return self.callAPI('https://lcd-prod.appspot.com/lcdweb/rpc/getStoreType?bundleId=%s&storeName=%s&sdkVersion=%s&t=%s'%(self.bundleId,self.storeName,self.sdkVersion,self.getTS13()),2,data)
 	
-	def createNewSession(self):
-		data='7|0|19|https://lcd-prod.appspot.com/lcdweb/|%s|%s|createNewSession|com.dena.west.lcd.web.shared.model.Capabilities/399814386|com.dena.west.lcd.web.shared.model.Credentials/2571271145|00000000-0000-0000-0000-000000000000|%s|%s|Mila432|iPhone10,6|%s|en_DE|Apple|wifi|11.1|%s|APPLE|Europe/Berlin|1|2|3|4|2|5|6|5|0|7|8|9|10|0|568|11|12|320|0|0|0|0|13|14|15|16|0|0|17|0|0|18|19|3600000|6|0|0|0|0|0|0|0|0|0|0|'%(self.E,self.rcp,self.app_version,self.bundleId,self.push_token,self.sdkVersion)
+	def createNewSession(self,loadOld):
+		if not loadOld:
+			data='7|0|19|https://lcd-prod.appspot.com/lcdweb/|%s|%s|createNewSession|com.dena.west.lcd.web.shared.model.Capabilities/399814386|com.dena.west.lcd.web.shared.model.Credentials/2571271145|00000000-0000-0000-0000-000000000000|%s|%s|Mila432|iPhone10,6|%s|en_DE|Apple|wifi|11.1|%s|APPLE|Europe/Berlin|1|2|3|4|2|5|6|5|0|7|8|9|10|0|568|11|12|320|0|0|0|0|13|14|15|16|0|0|17|0|0|18|19|3600000|6|0|0|0|0|0|0|0|0|0|0|'%(self.E,self.rcp,self.app_version,self.bundleId,self.push_token,self.sdkVersion)
+		else:
+			data='7|0|21|https://lcd-prod.appspot.com/lcdweb/|%s|%s|createNewSession|com.dena.west.lcd.web.shared.model.Capabilities/399814386|com.dena.west.lcd.web.shared.model.Credentials/2571271145|00000000-0000-0000-0000-000000000000|%s|%s|Mila432|iPhone10,6|%s|en_DE|Apple|wifi|11.1|%s|APPLE|Europe/Berlin|%s|%s|1|2|3|4|2|5|6|5|0|7|8|9|10|0|568|11|12|320|0|0|0|0|13|14|15|16|0|0|17|0|0|18|19|3600000|6|0|0|0|0|20|21|0|0|0|0|'%(self.E,self.rcp,self.app_version,self.bundleId,self.push_token,self.sdkVersion,self.device_id,self.u1)
 		res=self.callAPI('https://lcd-prod.appspot.com/lcdweb/rpc/createNewSession?bundleId=%s&storeName=%s&sdkVersion=%s&t=%s'%(self.bundleId,self.storeName,self.sdkVersion,self.getTS13()),2,data)
 		self.token=re.search('","(.{400,470})","',res).group(1)
 		self.userId=re.search('","([0-9]{15,15})","',res).group(1)

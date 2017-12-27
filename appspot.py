@@ -78,4 +78,4 @@ class Appspot(object):
 		self.E=re.search("this.e='(.{32,32})'}",input).group(1)
 
 	def setPremutation(self,input):
-		self.premutation=re.search("',jd='(.{32,32})',kd",input).group(1)
+		self.premutation=re.search("',Ec='(.{32,32})',Fc",input).group(1)
